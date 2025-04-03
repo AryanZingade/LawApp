@@ -79,7 +79,8 @@ def document_generation(inputs):
 
     template_path = fetch_template_from_blob(document_type)
     if not template_path:
-        return {"error": "Failed to fetch the document template."}
+        print("Error: Template fetching failed, stopping execution.")
+        return  # Stop execution if template fetching fails
 
     placeholders = extract_placeholders(template_path)
     if not placeholders:

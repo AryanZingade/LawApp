@@ -4,7 +4,6 @@ import TextInput from "./components/TextInput";
 import PdfUpload from "./components/UploadDocSum";
 import ResponseBox from "./components/ResponseBox";
 import Translate from "./components/TranslateDrop";
-import DocumentDownload from "./components/DocumentDownload";
 
 function App() {
   const [response, setResponse] = useState<any>(null);
@@ -36,9 +35,6 @@ function App() {
       />
 
       {response && <ResponseBox response={response} />}
-
-      {/* Show Download button only if document is ready */}
-      {documentReady && <DocumentDownload />}
     </div>
   );
 }

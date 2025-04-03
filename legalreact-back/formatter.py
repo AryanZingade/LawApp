@@ -164,7 +164,7 @@ def extract_json_from_response(response_text):
     try:
         # Remove markdown formatting if present (e.g., ```json ... ```)
         response_text = re.sub(r"```json\n|\n```", "", response_text).strip()
-        
+        print(f"GPT Response: {response_text}")
         # Convert to JSON
         extracted_data = json.loads(response_text)
 
