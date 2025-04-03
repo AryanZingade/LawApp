@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Document Translator</title>
+</head>
+<body>
+    <h2>Upload Legal Document for Translation</h2>
+    
+    <form id="uploadForm">
+        <label for="file">Choose a document:</label>
+        <input type="file" name="file" id="file" required>
+        <br><br>
+        
+        <button type="submit">Upload</button>
+    </form>
+
+    <h3>Translation</h3>
+    <label for="language">Select Target Language:</label>
+    <select name="target_language" id="language" required>
+        <option value="hi">Hindi</option>
+        <option value="es">Spanish</option>
+    </select>
+    <br><br>
+
+    <button id="translateBtn">Translate</button>
+
+    <h3>Translated Document</h3>
+    <textarea id="translatedText" readonly rows="10" cols="50"></textarea>
+
+    <script>
+        let uploadedFileName = "";
+
+        document.getElementById("uploadForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let formData = new FormData();
+            let fileInput = document.getElementById("file");
+            formData.append("file", fileInput.files[0]);
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.file_name) {
+                    uploadedFileName = data.file_name;
+                    alert("File uploaded successfully!");
+                } else {
+                    alert("Upload failed: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+
+        document.getElementById("translateBtn").addEventListener("click", function() {
+            let targetLanguage = document.getElementById("language").value;
+
+            fetch("/translate-document", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ file_name: uploadedFileName, target_language: targetLanguage })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.translated_text) {
+                    document.getElementById("translatedText").value = data.translated_text;
+                } else {
+                    alert("Translation failed: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+</body>
+</html>

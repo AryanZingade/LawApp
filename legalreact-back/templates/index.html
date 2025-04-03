@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal AI App</title>
+    <script>
+        async function sendQuery() {
+            const userInput = document.getElementById("query").value;
+            const response = await fetch("/invoke", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_input: userInput })
+            });
+
+            const result = await response.json();
+            displayFormattedResponse(result, "result");
+        }
+
+        async function uploadAndSummarize() {
+            const fileInput = document.getElementById("pdfFile");
+            if (fileInput.files.length === 0) {
+                alert("Please select a PDF file to upload.");
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            
+            const response = await fetch("/summarize", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.json();
+            displayFormattedResponse(result, "summaryResult");
+        }
+
+        function displayFormattedResponse(data, elementId) {
+            const resultDiv = document.getElementById(elementId);
+            resultDiv.innerHTML = ""; // Clear previous content
+            
+            if (data.error) {
+                resultDiv.innerHTML = `<p style="color: red;"><b>Error:</b> ${data.error}</p>`;
+                return;
+            }
+
+            let output = `<h3>Extracted Legal Details:</h3><ul>`;
+            for (const [key, value] of Object.entries(data)) {
+                output += `<li><b>${formatKey(key)}:</b> ${formatValue(value)}</li>`;
+            }
+            output += `</ul>`;
+
+            resultDiv.innerHTML = output;
+        }
+
+        function formatKey(key) {
+            return key.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+        }
+
+        function formatValue(value) {
+            if (Array.isArray(value)) {
+                return "<ul>" + value.map(item => `<li>${formatValue(item)}</li>`).join("") + "</ul>";
+            } else if (typeof value === "object" && value !== null) {
+                return "<ul>" + Object.entries(value)
+                    .map(([k, v]) => `<li><b>${formatKey(k)}:</b> ${formatValue(v)}</li>`)
+                    .join("") + "</ul>";
+            }
+            return value;
+        }
+    </script>
+</head>
+<body>
+    <h1>Legal AI App</h1>
+    
+    <h2>Legal Query</h2>
+    <input type="text" id="query" placeholder="Enter your legal query">
+    <button onclick="sendQuery()">Submit</button>
+    <div id="result"></div>
+    
+    <h2>Upload PDF for Summarization</h2>
+    <input type="file" id="pdfFile" accept="application/pdf">
+    <button onclick="uploadAndSummarize()">Summarize</button>
+    <div id="summaryResult"></div>
+</body>
+</html>

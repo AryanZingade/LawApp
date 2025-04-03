@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contract Summary</title>
+</head>
+<body>
+    <h1>Upload a Legal Document</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" name="file" id="fileInput" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Summary:</h2>
+    <div id="summary"></div>
+
+    <script>
+        document.getElementById("uploadForm").onsubmit = async function(event) {
+            event.preventDefault();
+            
+            let formData = new FormData();
+            formData.append("file", document.getElementById("fileInput").files[0]);
+
+            let response = await fetch("/upload", {
+                method: "POST",
+                body: formData
+            });
+
+            let result = await response.json();
+            if (result.summary) {
+                document.getElementById("summary").innerHTML = `<pre>${result.summary}</pre>`;
+            } else {
+                document.getElementById("summary").innerHTML = `<p>Error: ${result.error}</p>`;
+            }
+        };
+    </script>
+</body>
+</html>
