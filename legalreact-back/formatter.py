@@ -174,11 +174,6 @@ def extract_json_from_response(response_text):
         return None  # Return None if parsing fails
 
 
-
-from docx import Document
-
-from docx import Document
-
 def fill_document_with_gpt(template_path, extracted_data):
     try:
         doc = Document(template_path)
