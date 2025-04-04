@@ -1,9 +1,0 @@
-Flask
-python-dotenv
-azure-storage-blob
-openai
-python-docx
-httpx
-gunicorn
-flask-cors
-langchain
