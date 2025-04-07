@@ -1,13 +1,14 @@
 import React from "react";
+import { Heading, Box } from "@radix-ui/themes";
 
 function TitleArea() {
-  return <h1 style={styles.title}>Your Legal Assistant</h1>;
+  return (
+    <Box mb="4">
+      <Heading size="8" weight="medium">
+        Your Legal Assistant
+      </Heading>
+    </Box>
+  );
 }
-
-const styles = {
-  title: {
-    marginBottom: "10px",
-  },
-};
 
 export default TitleArea;

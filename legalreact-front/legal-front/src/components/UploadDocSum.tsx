@@ -1,10 +1,11 @@
 import React from "react";
 import axios from "axios";
+import { Flex, IconButton, Tooltip } from "@radix-ui/themes";
 
 function PdfUpload({
   setResponse,
   targetLanguage,
-  setDocumentReady, // Receive this prop
+  setDocumentReady,
 }: {
   setResponse: (data: any) => void;
   targetLanguage: string;
@@ -19,8 +20,9 @@ function PdfUpload({
 
       const formData = new FormData();
       formData.append("file", selectedFile);
-      if (type === "translate")
+      if (type === "translate") {
         formData.append("target_language", targetLanguage);
+      }
 
       const route = type === "summarize" ? "summarize" : "translatedoc";
 
@@ -32,7 +34,7 @@ function PdfUpload({
         );
 
         setResponse(response.data);
-        setDocumentReady(true); // Mark document as ready
+        setDocumentReady(true);
       } catch (error) {
         console.error(`Error uploading file to ${route}:`, error);
       }
@@ -40,40 +42,52 @@ function PdfUpload({
   };
 
   return (
-    <div style={{ display: "flex", gap: "10px" }}>
-      <label style={uploadButtonStyle}>
-        <i className="fas fa-folder"></i>
-        <input
-          type="file"
-          accept=".pdf"
-          onChange={(e) => handleUpload(e, "summarize")}
-          style={{ display: "none" }}
-        />
-      </label>
+    <Flex gap="4" mt="4">
+      {/* Summarize Upload */}
+      <Tooltip content="Upload PDF to Summarize">
+        <label>
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={(e) => handleUpload(e, "summarize")}
+            style={{ display: "none" }}
+          />
+          <IconButton
+            variant="soft"
+            size="3"
+            className="rounded-full border border-black"
+            asChild
+          >
+            <span>
+              <i className="fas fa-folder" style={{ fontSize: "18px" }}></i>
+            </span>
+          </IconButton>
+        </label>
+      </Tooltip>
 
-      <label style={uploadButtonStyle}>
-        <i className="fas fa-globe"></i>
-        <input
-          type="file"
-          accept=".pdf"
-          onChange={(e) => handleUpload(e, "translate")}
-          style={{ display: "none" }}
-        />
-      </label>
-    </div>
+      {/* Translate Upload */}
+      <Tooltip content="Upload PDF to Translate">
+        <label>
+          <input
+            type="file"
+            accept=".pdf"
+            onChange={(e) => handleUpload(e, "translate")}
+            style={{ display: "none" }}
+          />
+          <IconButton
+            variant="soft"
+            size="3"
+            className="rounded-full border border-black"
+            asChild
+          >
+            <span>
+              <i className="fas fa-globe" style={{ fontSize: "18px" }}></i>
+            </span>
+          </IconButton>
+        </label>
+      </Tooltip>
+    </Flex>
   );
 }
-
-const uploadButtonStyle = {
-  width: "40px",
-  height: "40px",
-  borderRadius: "50%",
-  border: "1.5px solid #ccc",
-  cursor: "pointer",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  fontSize: "18px",
-};
 
 export default PdfUpload;
